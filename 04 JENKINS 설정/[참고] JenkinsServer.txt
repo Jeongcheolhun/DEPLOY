@@ -1,0 +1,112 @@
+-------------------------------------------------------------
+JENKINS 설치
+-------------------------------------------------------------
+폴더 참고
+
+-------------------------------------------------------------
+1 기존 jenkins 제거 or 종료
+-------------------------------------------------------------
+systemctl stop jenkins
+systemctl disable jenkins
+
+
+-----------------------------
+젠킨스 설정
+-----------------------------
+---------------
+임시 패스워드
+---------------
+docker exec -it jenkins bash
+cat /var/jenkins_home/secrets/initialAdminPassword
+ 
+---------------
+Customize Jenkins
+---------------
+install suggested plugins 선택
+
+
+---------------
+플러그인 설치
+---------------
+gradle
+github integration
+post build task
+publish over ssh
+
+gradle : spring boot의 gradle을 사용하기 위한 플러그인
+github integration : github의 webhook을 사용하기 위한 플러그인
+post build task : 빌드 로그를 판단하여' script 혹은 shell을 실행할 수 있게 하는 플러그인
+publish over ssh : 다른 EC2에 접속하여 작업을 가능하게 해주는 플러그인
+
+
+
+
+---------------
+system(github)
+---------------
+jenkins관리 -> system -> 
+Add Github Server ->
+
+Name : Github.Server
+API URL : https://api.github.com
+Credentials -> Add -> Jenkins -> 
+Kind : Secret Text -> github토큰 붙여넣고 저장하기
+
+
+
+
+---------------
+tools(gradle설정)
+---------------
+jenkins관리 ->Gradle installations -> add Gradle -> 
+name:Gradle8.3
+Install automatically 체크
+Version : 8.3
+
+
+
+---------------
+Project설정 - general
+---------------
+GitHub project 체크
+배포할  Repository URL 저장
+
+
+---------------
+Project설정 - 소스 코드 관리
+---------------
+Git 체크
+배포할  Repository URL 저장
+branch master -> main으로 변경
+
+
+---------------
+Project설정 - 빌드유발
+---------------
+GitHub hook trigger for GITScm polling 체크
+
+Github Repository로 이동후 -> Settings -> Webhooks -> 
+add WebHooks -> 
+
+http://젠킨스서버IP:9090/github-webhooks/
+저장
+
+---------------
+Project설정 - 빌드 환경
+---------------
+Use secret text(s) or file(s) 체크
+Username Variable : USERNAME
+Password Variable : PASSWORD
+Credentials
+->Dokcer계정 선택
+
+---------------
+Project설정 - Build Steps
+---------------
+Invoke Gradle script ->
+Gradle Version : Gradle8.3
+Tasks : clean build
+
+
+
+
